@@ -7,14 +7,35 @@ ACT_REGEX = '=(\d+)$'
 
 """Add time estimates and actual time spent to tasks."""
 
-def summary(cli,tasks):
-    if(len(tasks) == 0):
+def is_canceled(task):
+    status = task.get('status','none')
+    return status == 'canceled'
+
+def split_canceled(tasks_including_canceled):
+    canceled = []
+    tasks = []
+    for task in tasks_including_canceled:
+        if is_canceled(task):
+            canceled.append(task)
+        else:
+            tasks.append(task)
+    return tasks,canceled
+
+def summary(cli,tasks_including_canceled):
+    if(len(tasks_including_canceled) == 0):
         return ""
     result = []
+    tasks, canceled = split_canceled(tasks_including_canceled)
     if cli.estimated_time:
         result.append(f'total time estimated: {_nice_time(_estimated_total(tasks))}')
+        time_canceled = _estimated_total(canceled)
+        if time_canceled != 0:
+            result.append(f'canceled: {_nice_time(time_canceled)}')
     if cli.actual_time:
         result.append(f'total time logged: {_nice_time(_logged_total(tasks))}')
+        logged_canceled = _logged_total(canceled)
+        if logged_canceled != 0:
+            result.append(f'canceled: {_nice_time(logged_canceled)}')
     result.append("")
     return "\n".join(result)
 
@@ -52,7 +73,7 @@ def txt_dumps(cli,task):
         return None
     times = []
     if cli.estimated_time:
-        times.append(_time_dump(task,EST_REGEX,"** no estimate **"))
+        times.append(_time_dump(task,EST_REGEX,"**no estimate**"))
 
     if cli.actual_time:
         times.append(_time_dump(task,ACT_REGEX,"no log"))
