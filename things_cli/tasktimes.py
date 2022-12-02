@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Add time estimates and actual time spent to task lists"""
+"""Add time estimates and actual time spent to task lists."""
 
 import re
 from functools import reduce
@@ -13,6 +13,7 @@ ACT_REGEX = r'=(\d+)$'
 
 
 def summary(cli, tasks_including_canceled):
+    """Return estimated and actual time summaries."""
     if (len(tasks_including_canceled) == 0):
         return ""
     result = []
@@ -32,11 +33,11 @@ def summary(cli, tasks_including_canceled):
 
 
 def _estimated_total(tasks):
-    return sum(tasks, EST_REGEX)
+    return _sum(tasks, EST_REGEX)
 
 
 def _logged_total(tasks):
-    return sum(tasks, ACT_REGEX)
+    return _sum(tasks, ACT_REGEX)
 
 
 def _is_canceled(task):
@@ -55,7 +56,7 @@ def _split_canceled(tasks_including_canceled):
     return tasks, canceled
 
 
-def sum(tasks, regex):
+def _sum(tasks, regex):
     if (len(tasks) == 0):
         return 0
     all_tags = [task.get('tags', None) for task in tasks]
@@ -63,7 +64,7 @@ def sum(tasks, regex):
     all_times = [_extract_minutes(t, regex) for t in all_tags_flat]
     if len(all_times) == 0:
         return 0
-    sum = total_time = reduce((lambda x, y: x + y), all_times)
+    sum = reduce((lambda x, y: x + y), all_times)
     return sum
 
 
@@ -79,6 +80,7 @@ def _nice_time(minutes):
 
 
 def txt_dumps(cli, task):
+    """Return time tags in concise form for txt_dumps."""
     if not (cli.estimated_time or cli.actual_time):
         return None
     if 'type' not in list(task):
@@ -93,21 +95,20 @@ def txt_dumps(cli, task):
     return "/".join(times)
 
 
-def _time_dump(task, regex, missing_test):
+def _time_dump(task, regex, missing_text):
     tags_with_estimate = None
-    txt = ""
     if 'tags' not in list(task):
-        return missing_test
+        return missing_text
 
     tags_with_estimate = list(filter(lambda t: _is_time_tag(t, regex), task['tags']))
     if tags_with_estimate and len(tags_with_estimate) > 0:
         return ", ".join(tags_with_estimate)
     else:
-        return missing_test
+        return missing_text
 
 
 def _is_time_tag(str, regex=EST_REGEX):
-    """ checks for regex match, thus if it's a time tag """
+    """Check for regex match, thus for time tag."""
     match = re.search(regex, str)
     if match:
         return True
@@ -122,6 +123,6 @@ SYMBOLS = {'canceled': u'\u2612 ',
 
 
 def status_symbol(task):
-    """maps task status to an unicode symbol"""
+    """Map task status to an unicode symbol."""
     status = task.get("status", "none")
     return (SYMBOLS.get(status, "?"))
