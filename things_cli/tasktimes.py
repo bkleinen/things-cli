@@ -2,20 +2,24 @@
 import re
 from functools import reduce
 
-
-EST_KEY = 'estimated_time'
 EST_REGEX = '#(\d+)$'
-ACT_KEY = 'actual_time'
 ACT_REGEX = '=(\d+)$'
 
 """Add time estimates and actual time spent to tasks."""
 
 def summary(cli,tasks):
-        if cli.estimated_time:
-            return(f'total time estimated: {_nice_time(_estimated_total(tasks))}')
+    result = []
+    if cli.estimated_time:
+        result.append(f'total time estimated: {_nice_time(_estimated_total(tasks))}')
+    if cli.actual_time:
+        result.append(f'total time logged: {_nice_time(_logged_total(tasks))}')
+    return "\n".join(result)
 
 def _estimated_total(tasks):
     return sum(tasks,EST_REGEX)
+
+def _logged_total(tasks):
+    return sum(tasks,ACT_REGEX)
 
 def sum(tasks,regex):
     all_tags = [task.get('tags',None) for task in tasks]
@@ -39,23 +43,26 @@ def txt_dumps(cli,task):
     if not (cli.estimated_time or cli.actual_time):
         return None
 
-    txt = ""
+    times = []
     if cli.estimated_time:
-        tags_with_estimate = None
-        if 'tags' not in list(task):
-            txt = txt + "** no estimate **"
-        else:
-            tags_with_estimate = list(filter(lambda t: _is_time_tag(t,EST_REGEX),task['tags']))
-        estimates = "** no estimate **"
-        if tags_with_estimate and len(tags_with_estimate) > 0:
-            estimates = ", ".join(tags_with_estimate)
-        txt = txt + estimates
+        times.append(_time_dump(task,EST_REGEX,"** no estimate **"))
+
     if cli.actual_time:
-        txt = txt + "here actual time"
+        times.append(_time_dump(task,ACT_REGEX,"no log"))
 
-    return txt
+    return "/".join(times)
 
+def _time_dump(task,regex,missing_test):
+    tags_with_estimate = None
+    txt = ""
+    if 'tags' not in list(task):
+        return missing_test
 
+    tags_with_estimate = list(filter(lambda t: _is_time_tag(t,regex),task['tags']))
+    if tags_with_estimate and len(tags_with_estimate) > 0:
+        return ", ".join(tags_with_estimate)
+    else:
+        return missing_test
 
 def _is_time_tag(str,regex = EST_REGEX):
     """ checks for regex match, thus if it's a time tag """
