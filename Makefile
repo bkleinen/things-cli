@@ -89,6 +89,7 @@ code-lint: ## Lint the code
 	@echo MyPy...
 	@if type mypy >/dev/null 2>&1 ; then mypy --ignore-missing-imports $(SRC_CORE) ; \
 	 else echo "SKIPPED. Run '$(PIP) install mypy' first." >&2 ; fi
+# skip fixit, seems to be wip: https://github.com/Instagram/Fixit
 #	@echo Fixit...
 #	@if type fixit >/dev/null 2>&1 ; then cd $(SRC_CORE) ; fixit run_rules ; \
 #	 else echo "SKIPPED. Run '$(PIP) install fixit' first." >&2 ; fi
@@ -99,7 +100,6 @@ deps-install: ## Install the dependencies
 	@type $(PIPENV) >/dev/null 2>&1 || (echo "Run '$(PIP) install pipenv' first." >&2 ; exit 1)
 	@$(PIPENV) install --dev
 	npm install -f pyright
-	@$(PIPENV) shell
 	@#$(PIP) install -r requirements.txt
 
 feedback: ## Give feedback
