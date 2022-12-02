@@ -21,12 +21,10 @@ jobs:
         make deps-install
     - name: Run lint
       run: |
-        pipenv shell
-        make lint
+        pipenv run make lint
     - name: Run tests
       run: |
-        pipenv shell
-        make test
+        pipenv run make test
     - name: "Upload coverage to Codecov"
       if: github.repository == 'thingsapi/things-cli'
       uses: codecov/codecov-action@v1
