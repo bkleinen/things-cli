@@ -17,6 +17,7 @@ import xml.etree.ElementTree as ETree
 from xml.etree.ElementTree import Element, SubElement
 import argcomplete  # type: ignore
 import things as api
+import tasktimes
 
 from things_cli import __version__
 
@@ -211,7 +212,8 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
                 or task.get("start", None)
             )
             start = task.get("start_date", None)
-            details = " | ".join(filter(None, [start, context]))
+            times = tasktimes.txt_dumps(self,task)
+            details = " | ".join(filter(None, [start, context, times]))
             result = result + f"{indentation}- {title} ({details})\n"
             result = self.txt_dumps(task.get("items", []), indentation + "  ", result)
             task.pop("items", [])
@@ -380,6 +382,24 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
         )
 
         parser.add_argument(
+            "-E",
+            "--estimate",
+            dest="estimated_time",
+            action='store_true',
+            help="show time estimated",
+            default=False
+        )
+
+        parser.add_argument(
+            "-A",
+            "--actual",
+            dest="actual_time",
+            action='store_true',
+            help="show actual time needed",
+            default=False
+        )
+
+        parser.add_argument(
             "--version",
             "-v",
             action="version",
@@ -416,6 +436,8 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             self.filter_tag = args.filter_tag or None
             self.only_projects = args.only_projects or None
             self.recursive = args.recursive
+            self.estimated_time = args.estimated_time
+            self.actual_time = args.actual_time
             # self.anonymize = args.anonymize
             # self.things3.anonymize = self.anonymize ## not implemented
             defaults = self.defaults()
