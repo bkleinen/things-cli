@@ -13,6 +13,7 @@ on:
 
 jobs:
   update_release_draft:
+    if: github.repository == 'thingsapi/things-cli'
     runs-on: ubuntu-latest
     steps:
       # (Optional) GitHub Enterprise requires GHE_HOST variable set
