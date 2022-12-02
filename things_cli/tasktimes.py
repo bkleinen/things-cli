@@ -1,31 +1,21 @@
 #!/usr/bin/env python3
+
+"""Add time estimates and actual time spent to task lists"""
+
 import re
 from functools import reduce
 
+# regular expressions to identity the time tags
+# and extract the time in minutes -
+# could be made configurable if needed.
 EST_REGEX = '#(\d+)$'
 ACT_REGEX = '=(\d+)$'
-
-"""Add time estimates and actual time spent to tasks."""
-
-def is_canceled(task):
-    status = task.get('status','none')
-    return status == 'canceled'
-
-def split_canceled(tasks_including_canceled):
-    canceled = []
-    tasks = []
-    for task in tasks_including_canceled:
-        if is_canceled(task):
-            canceled.append(task)
-        else:
-            tasks.append(task)
-    return tasks,canceled
 
 def summary(cli,tasks_including_canceled):
     if(len(tasks_including_canceled) == 0):
         return ""
     result = []
-    tasks, canceled = split_canceled(tasks_including_canceled)
+    tasks, canceled = _split_canceled(tasks_including_canceled)
     if cli.estimated_time:
         result.append(f'total time estimated: {_nice_time(_estimated_total(tasks))}')
         time_canceled = _estimated_total(canceled)
@@ -45,6 +35,20 @@ def _estimated_total(tasks):
 def _logged_total(tasks):
     return sum(tasks,ACT_REGEX)
 
+def _is_canceled(task):
+    status = task.get('status','none')
+    return status == 'canceled'
+
+def _split_canceled(tasks_including_canceled):
+    canceled = []
+    tasks = []
+    for task in tasks_including_canceled:
+        if _is_canceled(task):
+            canceled.append(task)
+        else:
+            tasks.append(task)
+    return tasks,canceled
+    
 def sum(tasks,regex):
     if(len(tasks) == 0):
         return 0
