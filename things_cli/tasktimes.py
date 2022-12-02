@@ -78,3 +78,8 @@ def _is_time_tag(str,regex = EST_REGEX):
       return True
     else:
       return False
+
+SYMBOLS=dict = {'canceled': u'\u2612 ','completed': u'\u2611 ', 'incomplete' : u'\u2610 ', 'none': ''}
+def status_symbol(task):
+    status = task.get("status","none")
+    return(SYMBOLS.get(status,"?"))

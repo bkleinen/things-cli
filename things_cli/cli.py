@@ -214,7 +214,8 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             start = task.get("start_date", None)
             times = tasktimes.txt_dumps(self,task)
             details = " | ".join(filter(None, [start, context, times]))
-            result = result + f"{indentation}- {title} ({details})\n"
+            status = tasktimes.status_symbol(task)
+            result = result + f"{indentation}- {status}{title} ({details})\n"
             result = self.txt_dumps(task.get("items", []), indentation + "  ", result)
             task.pop("items", [])
             result = self.txt_dumps(
