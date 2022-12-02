@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+argcomplete = "==2.0.0"
+"things.py" = {ref = "694f480", git = "https://github.com/bkleinen/things.py"}
+
+[dev-packages]
+black = "*"
+pycodestyle = "*"
+pylama = "*"
+pylint = "*"
+flake8 = "*"
+mypy = "*"
+fixit = "*"
+coverage = "*"
+isort = "*"
+
+[requires]
+python_version = "3.9"
+python_full_version = "3.9.6"

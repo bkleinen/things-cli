@@ -10,3 +10,4 @@ htmlcov/
 *.opml
 .mypy_cache
 *.pyc
+dbbackups/

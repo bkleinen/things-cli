@@ -96,9 +96,11 @@ code-lint: ## Lint the code
 lint: code-style code-lint  ## Lint everything
 
 deps-install: ## Install the dependencies
-	@#type $(PIPENV) >/dev/null 2>&1 || (echo "Run '$(PIP) install pipenv' first." >&2 ; exit 1)
-	@#$(PIPENV) install
-	@$(PIP) install -r requirements.txt
+	@type $(PIPENV) >/dev/null 2>&1 || (echo "Run '$(PIP) install pipenv' first." >&2 ; exit 1)
+	@$(PIPENV) install --dev
+	npm install -f pyright
+	@$(PIPENV) shell
+	@#$(PIP) install -r requirements.txt
 
 feedback: ## Give feedback
 	@open https://github.com/thingsapi/things-cli/issues
@@ -124,7 +126,17 @@ upload: build ## Upload the code
 	@echo "########################"
 	@twine upload dist/$(APP)*
 
-db-to-things:
+BACKUPNAME:=dbbackups/things-db-backup-$(shell date +%Y-%m-%d--%H-%M-%S)
+db-backup:
+	@echo copy REAL things db to $(BACKUPNAME)
+	@mkdir -p $(BACKUPNAME)
+	@cp ~/Library/Group\ Containers/JLMPQHK86H.com.culturedcode.ThingsMac/Things\ Database.thingsdatabase/main.sqlite* $(BACKUPNAME)/
+
+# usage: file= ... make db-backup-restore
+db-backup-restore: db-backup
+	@cp $(file)/main.sqlite* ~/Library/Group\ Containers/JLMPQHK86H.com.culturedcode.ThingsMac/Things\ Database.thingsdatabase/
+
+db-to-things: db-backup
 	@cp tests/main.sqlite* ~/Library/Group\ Containers/JLMPQHK86H.com.culturedcode.ThingsMac/Things\ Database.thingsdatabase/
 
 db-from-things:
