@@ -19,9 +19,9 @@ from xml.etree.ElementTree import Element, SubElement
 import argcomplete  # type: ignore
 import things as api
 
-
 from things_cli import __version__
 from things_cli import tasktimes
+
 
 THINGS_TIME_FORMAT = "%Y-%m-%d"
 
