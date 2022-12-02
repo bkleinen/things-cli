@@ -9,6 +9,7 @@ import csv
 import datetime
 from io import StringIO
 import json
+from random import choice
 import sys
 from typing import Dict
 import webbrowser
@@ -18,7 +19,6 @@ from xml.etree.ElementTree import Element, SubElement
 import argcomplete  # type: ignore
 import things as api
 
-from random import choice
 
 from things_cli import __version__
 from things_cli import tasktimes
@@ -40,6 +40,8 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
     filter_area = None
     filter_tag = None
     only_projects = None
+    estimated_time = None
+    actual_time = None
 
     def __init__(self, database=None):
         """Initialize class."""
@@ -449,7 +451,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
 
             self.parse_command(defaults, args)
 
-    def parse_command(self, defaults: Dict, args):
+    def parse_command(self, defaults: Dict, args):  # noqa: C901, R0914
         """Handle given command."""
 
         command = args.command
@@ -491,8 +493,11 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             result = getattr(api, "logbook")(**defaults, stop_date=today)
             self.print_tasks(result)
         elif command == "logyesterday":
-            yesterday = (datetime.date.today() - datetime.timedelta(days=1)).strftime(THINGS_TIME_FORMAT)
-            result = getattr(api, "logbook")(**defaults, stop_date=yesterday, exact=True)
+            yesterday = datetime.date.today() - datetime.timedelta(days=1)
+            yesterday_str = yesterday.strftime(THINGS_TIME_FORMAT)
+            result = getattr(api, "logbook")(**defaults,
+                                             stop_date=yesterday_str,
+                                             exact=True)
             self.print_tasks(result)
         elif command == "createdtoday":
             result = getattr(api, "last")("1d")

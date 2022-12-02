@@ -1,0 +1,10 @@
+# allow_list_rules: []
+block_list_patterns:
+- '@generated'
+- '@nolint'
+# block_list_rules: []
+packages:
+- fixit.rules
+repo_root: ./things_cli
+# rule_config: {}
+use_noqa: true

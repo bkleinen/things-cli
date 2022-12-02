@@ -21,7 +21,7 @@ jobs:
         make deps-install
     - name: Run lint
       run: |
-        pip install black pycodestyle pylama pylint flake8 mypy
+        pip install black pycodestyle pylama pylint flake8 mypy fixit
         npm install -f pyright
         make lint
     - name: Run tests

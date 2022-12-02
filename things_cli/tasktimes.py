@@ -14,7 +14,7 @@ ACT_REGEX = r'=(\d+)$'
 
 def summary(cli, tasks_including_canceled):
     """Return estimated and actual time summaries."""
-    if (len(tasks_including_canceled) == 0):
+    if len(tasks_including_canceled) == 0:
         return ""
     result = []
     tasks, canceled = _split_canceled(tasks_including_canceled)
@@ -57,19 +57,18 @@ def _split_canceled(tasks_including_canceled):
 
 
 def _sum(tasks, regex):
-    if (len(tasks) == 0):
+    if len(tasks) == 0:
         return 0
     all_tags = [task.get('tags', None) for task in tasks]
     all_tags_flat = [item for list in all_tags if list is not None for item in list]
     all_times = [_extract_minutes(t, regex) for t in all_tags_flat]
     if len(all_times) == 0:
         return 0
-    sum = reduce((lambda x, y: x + y), all_times)
-    return sum
+    return reduce((lambda x, y: x + y), all_times)
 
 
-def _extract_minutes(str, regex=EST_REGEX):
-    match = re.search(regex, str)
+def _extract_minutes(tag, regex=EST_REGEX):
+    match = re.search(regex, tag)
     if match:
         return int(match[1])
     return 0
@@ -103,26 +102,22 @@ def _time_dump(task, regex, missing_text):
     tags_with_estimate = list(filter(lambda t: _is_time_tag(t, regex), task['tags']))
     if tags_with_estimate and len(tags_with_estimate) > 0:
         return ", ".join(tags_with_estimate)
-    else:
-        return missing_text
+    return missing_text
 
 
-def _is_time_tag(str, regex=EST_REGEX):
+def _is_time_tag(tag, regex=EST_REGEX):
     """Check for regex match, thus for time tag."""
-    match = re.search(regex, str)
-    if match:
-        return True
-    else:
-        return False
+    match = re.search(regex, tag)
+    return bool(match)
 
 
-SYMBOLS = {'canceled': u'\u2612 ',
-           'completed': u'\u2611 ',
-           'incomplete' : u'\u2610 ',
+SYMBOLS = {'canceled': '\u2612 ',
+           'completed': '\u2611 ',
+           'incomplete' : '\u2610 ',
            'none': ''}
 
 
 def status_symbol(task):
     """Map task status to an unicode symbol."""
     status = task.get("status", "none")
-    return (SYMBOLS.get(status, "?"))
+    return SYMBOLS.get(status, "?")
