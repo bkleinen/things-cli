@@ -5,7 +5,6 @@
 import io
 import sys
 import unittest
-
 from things_cli import cli
 
 
@@ -41,7 +40,7 @@ class ThingsCLICase(unittest.TestCase):
                 self._test_main(args, ";")
                 args = parser.parse_args(["-r", "-j", command])
                 self._test_main(args, " ")
-            elif command in ["logtoday","logyesterday"]:
+            elif command in ["logtoday", "logyesterday"]:
                 args = parser.parse_args([command])
                 self._test_main(args, "")
             elif command in ["search"]:

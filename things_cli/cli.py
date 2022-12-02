@@ -17,12 +17,14 @@ import xml.etree.ElementTree as ETree
 from xml.etree.ElementTree import Element, SubElement
 import argcomplete  # type: ignore
 import things as api
-import tasktimes
+
 from random import choice
 
 from things_cli import __version__
+from things_cli import tasktimes
 
-THINGS_TIME_FORMAT="%Y-%m-%d"
+THINGS_TIME_FORMAT = "%Y-%m-%d"
+
 
 class ThingsCLI:  # pylint: disable=too-many-instance-attributes
     """A simple Python 3 CLI to read your Things app data."""
@@ -213,7 +215,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
                 or task.get("start", None)
             )
             start = task.get("start_date", None)
-            times = tasktimes.txt_dumps(self,task)
+            times = tasktimes.txt_dumps(self, task)
             details = " | ".join(filter(None, [start, context, times]))
             status = tasktimes.status_symbol(task)
             result = result + f"{indentation}- {status}{title} ({details})\n"
@@ -222,7 +224,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             result = self.txt_dumps(
                 task.get("checklist", []), indentation + "  ", result
             )
-        result = result + tasktimes.summary(self,tasks)
+        result = result + tasktimes.summary(self, tasks)
         return result
 
     @classmethod
@@ -489,7 +491,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             result = getattr(api, "logbook")(**defaults, stop_date=today)
             self.print_tasks(result)
         elif command == "logyesterday":
-            yesterday = (datetime.date.today()-datetime.timedelta(days=1)).strftime(THINGS_TIME_FORMAT)
+            yesterday = (datetime.date.today() - datetime.timedelta(days=1)).strftime(THINGS_TIME_FORMAT)
             result = getattr(api, "logbook")(**defaults, stop_date=yesterday, exact=True)
             self.print_tasks(result)
         elif command == "createdtoday":
