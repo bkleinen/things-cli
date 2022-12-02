@@ -8,6 +8,8 @@ ACT_REGEX = '=(\d+)$'
 """Add time estimates and actual time spent to tasks."""
 
 def summary(cli,tasks):
+    if(len(tasks) == 0):
+        return ""
     result = []
     if cli.estimated_time:
         result.append(f'total time estimated: {_nice_time(_estimated_total(tasks))}')
@@ -22,11 +24,12 @@ def _logged_total(tasks):
     return sum(tasks,ACT_REGEX)
 
 def sum(tasks,regex):
+    if(len(tasks) == 0):
+        return 0
     all_tags = [task.get('tags',None) for task in tasks]
     all_tags_flat = [item for list in all_tags if list is not None for item in list]
     all_times = [_extract_minutes(t,regex) for t in all_tags_flat]
     sum = total_time = reduce((lambda x, y: x + y),all_times)
-
     return sum
 
 def _extract_minutes(str,regex = EST_REGEX):
