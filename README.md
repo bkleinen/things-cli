@@ -24,6 +24,11 @@ $ pip3 install things-cli
 # or
 $ git clone https://github.com/thingsapi/things-cli && cd things-cli && make install
 ```
+## Development
+
+```sh
+$ python -m things_cli.cli
+```
 
 ## Examples
 

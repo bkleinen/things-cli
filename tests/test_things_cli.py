@@ -78,6 +78,36 @@ class ThingsCLICase(unittest.TestCase):
             sys.stdout = old_out
         self.assertIn("To-Do in Today", new_out.getvalue())
 
+    def test_today_with_estimates(self):
+        """Test Today."""
+        args = self.things3_cli.get_parser().parse_args(
+            ["-d", "tests/main.sqlite", "-A", "-E", "today"]
+        )
+        new_out = io.StringIO()
+        old_out = sys.stdout
+        try:
+            sys.stdout = new_out
+            self.things3_cli.main(args)
+        finally:
+            sys.stdout = old_out
+        self.assertIn("estimated: 0 hours 25 minutes", new_out.getvalue())
+        self.assertIn("#25/no log)", new_out.getvalue())
+
+    def test_logbook_with_estimates(self):
+        """Test Logbook."""
+        args = self.things3_cli.get_parser().parse_args(
+            ["-d", "tests/main.sqlite", "-A", "-E", "logbook"]
+        )
+        new_out = io.StringIO()
+        old_out = sys.stdout
+        try:
+            sys.stdout = new_out
+            self.things3_cli.main(args)
+        finally:
+            sys.stdout = old_out
+        self.assertIn("estimated: 1 hours 0 minutes", new_out.getvalue())
+        self.assertIn("logged: 1 hours 30 minutes", new_out.getvalue())
+
     def test_csv(self):
         """Test Next via CSV."""
         args = self.things3_cli.get_parser().parse_args(

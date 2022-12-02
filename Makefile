@@ -21,6 +21,7 @@ help: ## Print help for each target
 		| sort | awk 'BEGIN {FS=":.* ## "}; {printf "%-25s %s\n", $$1, $$2};'
 
 run: ## Run the code
+	@echo $(PYTHON) -m $(SRC_CORE).$(MAIN)
 	@$(PYTHON) -m $(SRC_CORE).$(MAIN)
 
 install: ## Install the code
