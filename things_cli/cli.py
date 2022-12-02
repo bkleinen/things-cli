@@ -18,6 +18,7 @@ from xml.etree.ElementTree import Element, SubElement
 import argcomplete  # type: ignore
 import things as api
 import tasktimes
+from random import choice
 
 from things_cli import __version__
 
@@ -243,6 +244,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
         ################################
         subparsers.add_parser("inbox", help="Shows inbox tasks")
         subparsers.add_parser("today", help="Shows todays tasks")
+        subparsers.add_parser("random", help="Picks a random task from todays")
         subparsers.add_parser("upcoming", help="Shows upcoming tasks")
         subparsers.add_parser("anytime", help="Shows anytime tasks")
         subparsers.add_parser("completed", help="Shows completed tasks")
@@ -478,6 +480,10 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
                 {"title": "Areas", "items": areas},
             ]
             self.print_tasks(structure)
+        elif command == "random":
+            tasks_today = getattr(api, "today")(**defaults)
+            chosen = [choice(tasks_today)]
+            self.print_tasks(chosen)
         elif command == "logtoday":
             today = datetime.datetime.now().strftime(THINGS_TIME_FORMAT)
             result = getattr(api, "logbook")(**defaults, stop_date=today)
