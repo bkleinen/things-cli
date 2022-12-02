@@ -115,12 +115,13 @@ def _is_time_tag(str, regex=EST_REGEX):
         return False
 
 
-SYMBOLS = dict = {'canceled': u'\u2612 ',
-                  'completed': u'\u2611 ',
-                  'incomplete' : u'\u2610 ',
-                  'none': ''}
+SYMBOLS = {'canceled': u'\u2612 ',
+           'completed': u'\u2611 ',
+           'incomplete' : u'\u2610 ',
+           'none': ''}
 
 
 def status_symbol(task):
+    """maps task status to an unicode symbol"""
     status = task.get("status", "none")
     return (SYMBOLS.get(status, "?"))
