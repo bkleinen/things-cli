@@ -15,6 +15,7 @@ def summary(cli,tasks):
         result.append(f'total time estimated: {_nice_time(_estimated_total(tasks))}')
     if cli.actual_time:
         result.append(f'total time logged: {_nice_time(_logged_total(tasks))}')
+    result.append("")
     return "\n".join(result)
 
 def _estimated_total(tasks):
@@ -29,6 +30,8 @@ def sum(tasks,regex):
     all_tags = [task.get('tags',None) for task in tasks]
     all_tags_flat = [item for list in all_tags if list is not None for item in list]
     all_times = [_extract_minutes(t,regex) for t in all_tags_flat]
+    if len(all_times) == 0:
+      return 0
     sum = total_time = reduce((lambda x, y: x + y),all_times)
     return sum
 
@@ -45,7 +48,8 @@ def _nice_time(minutes):
 def txt_dumps(cli,task):
     if not (cli.estimated_time or cli.actual_time):
         return None
-
+    if not 'type' in list(task):
+        return None
     times = []
     if cli.estimated_time:
         times.append(_time_dump(task,EST_REGEX,"** no estimate **"))
