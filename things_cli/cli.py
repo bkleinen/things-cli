@@ -89,13 +89,16 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             print(self.gantt_dumps(tasks))
         elif self.split_tag:
             a, b = split(lambda t: has_tag(t, self.split_tag), tasks)
-            print(tasktimes.summary(self, tasks, True))
+            print(tasktimes.summary(self, tasks, [], True))
             print(f'---- with {self.split_tag}: ')
+            time_estimates = []
             print(self.txt_dumps(b), end="")
             print("---- without tag: ")
             print(self.txt_dumps(a), end="")
         else:
-            print(self.txt_dumps(tasks), end="")
+            time_estimates = []
+            print(self.txt_dumps(tasks, time_estimates=time_estimates), end="")
+            print(tasktimes.collected(time_estimates))
 
     def gantt_dumps(self, tasks, array=None):
         """Convert tasks into mermaid-js GANTT."""
@@ -213,7 +216,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             self.opml_convert(task.get("checklist", []), area)
             task.pop("checklist", [])
 
-    def txt_dumps(self, tasks, indentation="", result="", est_times=[]):
+    def txt_dumps(self, tasks, indentation="", result="", time_estimates=[]):
         """Print pretty text version of selected tasks."""
 
         if tasks is True:
@@ -227,16 +230,18 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
                 or task.get("start", None)
             )
             start = task.get("start_date", None)
-            times = tasktimes.txt_dumps(self, task)
+            times = tasktimes.time_details(self, task)
             details = " | ".join(filter(None, [start, context, times]))
             status = tasktimes.status_symbol(task)
             result = result + f"{indentation}- {status}{title} ({details})\n"
-            result = self.txt_dumps(task.get("items", []), indentation + "  ", result)
+            result = self.txt_dumps(task.get("items", []), indentation + "  ", result, time_estimates)
             task.pop("items", [])
             result = self.txt_dumps(
-                task.get("checklist", []), indentation + "  ", result
+                task.get("checklist", []), indentation + "  ",
+                result,
+                time_estimates
             )
-        result = result + tasktimes.summary(self, tasks)
+        result = result + tasktimes.summary(self, tasks, time_estimates)
         return result
 
     @classmethod
