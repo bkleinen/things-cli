@@ -39,6 +39,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
     filter_project = None
     filter_area = None
     filter_tag = None
+    print_sql = None
     only_projects = None
     estimated_time = None
     actual_time = None
@@ -332,6 +333,13 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             "-t", "--filtertag", dest="filter_tag", help="filter by tag"
         )
         parser.add_argument(
+            "-s", "--print_sql",
+            action="store_true",
+            default=False,
+            dest="print_sql",
+            help="print sql queries"
+        )
+        parser.add_argument(
             "-e",
             "--only-projects",
             action="store_true",
@@ -423,6 +431,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             project=self.filter_project,
             area=self.filter_area,
             tag=self.filter_tag,
+            print_sql=self.print_sql,
             include_items=self.recursive,
             filepath=self.database,
         )
@@ -441,6 +450,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             self.filter_project = args.filter_project or None
             self.filter_area = args.filter_area or None
             self.filter_tag = args.filter_tag or None
+            self.print_sql = args.print_sql or None
             self.only_projects = args.only_projects or None
             self.recursive = args.recursive
             self.estimated_time = args.estimated_time
