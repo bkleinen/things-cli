@@ -21,7 +21,7 @@ import things as api
 
 from things_cli import __version__
 from things_cli import tasktimes
-
+from things_cli.helpers import split, has_tag
 
 THINGS_TIME_FORMAT = "%Y-%m-%d"
 
@@ -39,6 +39,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
     filter_project = None
     filter_area = None
     filter_tag = None
+    split_tag = None
     print_sql = None
     only_projects = None
     estimated_time = None
@@ -85,6 +86,13 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             print("  title       Things To-Dos")
             print("  excludes    weekends")
             print(self.gantt_dumps(tasks))
+        elif self.split_tag:
+            a, b = split(lambda t: has_tag(t, self.split_tag), tasks)
+            print(tasktimes.summary(self, tasks))
+            print(f'---- with {self.split_tag}: ')
+            print(self.txt_dumps(b), end="")
+            print("---- without tag: ")
+            print(self.txt_dumps(a), end="")
         else:
             print(self.txt_dumps(tasks), end="")
 
@@ -333,6 +341,9 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             "-t", "--filtertag", dest="filter_tag", help="filter by tag"
         )
         parser.add_argument(
+            "-st", "--split_tag", dest="split_tag", help="split list by tag"
+        )
+        parser.add_argument(
             "-s", "--print_sql",
             action="store_true",
             default=False,
@@ -450,6 +461,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             self.filter_project = args.filter_project or None
             self.filter_area = args.filter_area or None
             self.filter_tag = args.filter_tag or None
+            self.split_tag = args.split_tag or None
             self.print_sql = args.print_sql or None
             self.only_projects = args.only_projects or None
             self.recursive = args.recursive
