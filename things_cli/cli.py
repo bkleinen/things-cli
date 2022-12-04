@@ -10,6 +10,7 @@ import datetime
 from io import StringIO
 import json
 from random import choice
+import os
 import sys
 from typing import Dict
 import webbrowser
@@ -88,7 +89,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             print(self.gantt_dumps(tasks))
         elif self.split_tag:
             a, b = split(lambda t: has_tag(t, self.split_tag), tasks)
-            print(tasktimes.summary(self, tasks))
+            print(tasktimes.summary(self, tasks, True))
             print(f'---- with {self.split_tag}: ')
             print(self.txt_dumps(b), end="")
             print("---- without tag: ")
@@ -212,7 +213,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             self.opml_convert(task.get("checklist", []), area)
             task.pop("checklist", [])
 
-    def txt_dumps(self, tasks, indentation="", result=""):
+    def txt_dumps(self, tasks, indentation="", result="", est_times=[]):
         """Print pretty text version of selected tasks."""
 
         if tasks is True:
@@ -508,8 +509,9 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             self.print_tasks(structure)
         elif command == "random":
             tasks_today = getattr(api, "today")(**defaults)
-            chosen = [choice(tasks_today)]
-            self.print_tasks(chosen)
+            chosen = choice(tasks_today)
+            self.print_tasks([chosen])
+            os.system(f'open things:///show?id={chosen["uuid"]}')
         elif command == "logtoday":
             today = datetime.datetime.now().strftime(THINGS_TIME_FORMAT)
             result = getattr(api, "logbook")(**defaults, stop_date=today)

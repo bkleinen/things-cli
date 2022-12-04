@@ -3,6 +3,7 @@
 """Add time estimates and actual time spent to task lists."""
 
 import re
+import time
 from functools import reduce
 
 # regular expressions to identity the time tags
@@ -12,17 +13,22 @@ EST_REGEX = r'#(\d+)$'
 ACT_REGEX = r'=(\d+)$'
 
 
-def summary(cli, tasks_including_canceled):
+def summary(cli, tasks_including_canceled, project=False):
     """Return estimated and actual time summaries."""
     if len(tasks_including_canceled) == 0:
         return ""
     result = []
     tasks, canceled = _split_canceled(tasks_including_canceled)
     if cli.estimated_time:
-        result.append(f'total time estimated: {_nice_time(_estimated_total(tasks))}')
+        estimated_minutes = _estimated_total(tasks)
+        result.append(f'total time estimated: {_nice_time(estimated_minutes)}')
         time_canceled = _estimated_total(canceled)
         if time_canceled != 0:
             result.append(f'canceled: {_nice_time(time_canceled)}')
+        if project:
+            now = time.time()
+            result.append(f'Time now: {time.ctime(now)}')
+            result.append(f'Time finished: {time.ctime(now+60*estimated_minutes)}')
     if cli.actual_time:
         result.append(f'total time logged: {_nice_time(_logged_total(tasks))}')
         logged_canceled = _logged_total(canceled)
