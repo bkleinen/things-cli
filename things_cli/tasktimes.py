@@ -13,9 +13,12 @@ EST_REGEX = r'#(\d+)$'
 ACT_REGEX = r'=(\d+)$'
 
 
-def collected(time_estimates):
+def collected(cli, time_estimates):
+    if not cli.estimated_time:
+        return ""
     estimated_minutes = reduce((lambda x, y: x + y), time_estimates)
     return f'total time estimated: {_nice_time(estimated_minutes)}'
+
 
 
 def summary(cli, tasks_including_canceled, time_estimates, project=False):

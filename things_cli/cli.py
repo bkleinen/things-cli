@@ -98,7 +98,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
         else:
             time_estimates = []
             print(self.txt_dumps(tasks, time_estimates=time_estimates), end="")
-            print(tasktimes.collected(time_estimates))
+            print(tasktimes.collected(self, time_estimates))
 
     def gantt_dumps(self, tasks, array=None):
         """Convert tasks into mermaid-js GANTT."""
