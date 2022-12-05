@@ -2,6 +2,7 @@
 
 """Module documentation goes here."""
 
+from tests import mocks
 import io
 import sys
 import unittest

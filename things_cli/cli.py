@@ -22,6 +22,7 @@ import things as api
 
 from things_cli import __version__
 from things_cli import tasktimes
+from things_cli import thingsconnection
 from things_cli.helpers import split, has_tag
 
 THINGS_TIME_FORMAT = "%Y-%m-%d"
@@ -503,7 +504,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             upcoming = api.upcoming(**defaults)
             anytime = api.anytime(**defaults)
             someday = api.someday(**defaults)
-            # logbook = api.logbook(**defaults)
+            logbook = api.logbook(**defaults)
 
             no_area = api.projects(**defaults)
             areas = api.areas(**defaults)
@@ -513,7 +514,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
                 {"title": "Upcoming", "items": upcoming},
                 {"title": "Anytime", "items": anytime},
                 {"title": "Someday", "items": someday},
-                # {"title": "Logbook", "items": logbook},
+                {"title": "Logbook", "items": logbook},
                 {"title": "No Area", "items": no_area},
                 {"title": "Areas", "items": areas},
             ]
@@ -551,9 +552,9 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             tasks_today = getattr(api, "today")(**defaults)
             chosen = choice(tasks_today)
             self.print_tasks([chosen])
-            os.system(f'open things:///show?id={chosen["uuid"]}')
+            thingsconnection.open_todo_in_things(chosen["uuid"])
         elif command == "logtoday":
-            result = self.logtoday(**defaults)
+            result = self.logtoday(defaults)
             self.print_tasks(result)
         elif command == "logyesterday":
             yesterday = datetime.date.today() - datetime.timedelta(days=1)
