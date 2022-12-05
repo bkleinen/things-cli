@@ -497,7 +497,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             upcoming = api.upcoming(**defaults)
             anytime = api.anytime(**defaults)
             someday = api.someday(**defaults)
-            logbook = api.logbook(**defaults)
+            # logbook = api.logbook(**defaults)
 
             no_area = api.projects(**defaults)
             areas = api.areas(**defaults)
@@ -507,7 +507,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
                 {"title": "Upcoming", "items": upcoming},
                 {"title": "Anytime", "items": anytime},
                 {"title": "Someday", "items": someday},
-                {"title": "Logbook", "items": logbook},
+                # {"title": "Logbook", "items": logbook},
                 {"title": "No Area", "items": no_area},
                 {"title": "Areas", "items": areas},
             ]
