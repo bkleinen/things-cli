@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 argcomplete = "==2.0.0"
 "things.py" = {ref = "694f480", git = "https://github.com/bkleinen/things.py"}
+things-cli = {editable = true, path = "."}
 
 [dev-packages]
 black = "*"

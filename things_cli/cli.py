@@ -272,6 +272,8 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
         subparsers.add_parser("trash", help="Shows trashed tasks")
         subparsers.add_parser("todos", help="Shows all todos")
         subparsers.add_parser("all", help="Shows all tasks")
+        subparsers.add_parser("planDay", help="Shows the open todos and log for today")
+        subparsers.add_parser("planWeek", help="Shows all Tasks tagged with kw<week>")
         subparsers.add_parser("areas", help="Shows all areas")
         subparsers.add_parser("projects", help="Shows all projects")
         subparsers.add_parser("logbook", help="Shows completed tasks")
@@ -453,6 +455,10 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             filepath=self.database,
         )
 
+    def logtoday(self, defaults: Dict):
+        today = datetime.datetime.now().strftime(THINGS_TIME_FORMAT)
+        return getattr(api, "logbook")(**defaults, stop_date=today)
+
     def main(self, args=None):
         """Start the main app."""
 
@@ -487,7 +493,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
         if command == "tags":
             defaults.pop("tag")
             defaults.pop("project")
-        if command in ["all", "areas"]:
+        if command in ["all", "areas", "planDay", "planWeek"]:
             defaults.pop("area")
             defaults.pop("project")
 
@@ -512,14 +518,42 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
                 {"title": "Areas", "items": areas},
             ]
             self.print_tasks(structure)
+        elif command == "planDay":
+            inbox = api.inbox(**defaults)
+            today = api.today(**defaults)
+            logtoday = self.logtoday(defaults)
+
+            structure = [
+                 {"title": "LogToday", "items": logtoday},
+                 {"title": "Today", "items": today},
+            ]
+            self.print_tasks(structure)
+        elif command == "planWeek":
+            inbox = api.inbox(**defaults)
+            today = api.today(**defaults)
+            upcoming = api.upcoming(**defaults)
+            anytime = api.anytime(**defaults)
+            someday = api.someday(**defaults)
+
+            no_area = api.projects(**defaults)
+            areas = api.areas(**defaults)
+            structure = [
+                {"title": "Inbox", "items": inbox},
+                {"title": "Today", "items": today},
+                {"title": "Upcoming", "items": upcoming},
+                {"title": "Anytime", "items": anytime},
+                {"title": "Someday", "items": someday},
+                {"title": "No Area", "items": no_area},
+                {"title": "Areas", "items": areas},
+            ]
+            self.print_tasks(structure)
         elif command == "random":
             tasks_today = getattr(api, "today")(**defaults)
             chosen = choice(tasks_today)
             self.print_tasks([chosen])
             os.system(f'open things:///show?id={chosen["uuid"]}')
         elif command == "logtoday":
-            today = datetime.datetime.now().strftime(THINGS_TIME_FORMAT)
-            result = getattr(api, "logbook")(**defaults, stop_date=today)
+            result = self.logtoday(**defaults)
             self.print_tasks(result)
         elif command == "logyesterday":
             yesterday = datetime.date.today() - datetime.timedelta(days=1)

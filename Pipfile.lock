@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3ef719051e396e063dae74ada1db4dc634c917f70a44dff301d5e033b4662e79"
+            "sha256": "283b9cc6a77a59d97029d8e2023892d3e8323a0e2be0b9c5c6344211caf1cfa8"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -23,6 +23,10 @@
             ],
             "index": "pypi",
             "version": "==2.0.0"
+        },
+        "things-cli": {
+            "editable": true,
+            "path": "."
         },
         "things-py": {
             "git": "https://github.com/bkleinen/things.py",
@@ -347,11 +351,11 @@
         },
         "pylint": {
             "hashes": [
-                "sha256:1d561d1d3e8be9dd880edc685162fbdaa0409c88b9b7400873c0cf345602e326",
-                "sha256:91e4776dbcb4b4d921a3e4b6fec669551107ba11f29d9199154a01622e460a57"
+                "sha256:ea82cd6a1e11062dc86d555d07c021b0fb65afe39becbe6fe692efd6c4a67443",
+                "sha256:ec4a87c33da054ab86a6c79afa6771dc8765cb5631620053e727fcf3ef8cbed7"
             ],
             "index": "pypi",
-            "version": "==2.15.7"
+            "version": "==2.15.8"
         },
         "pyrsistent": {
             "hashes": [
