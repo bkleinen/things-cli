@@ -42,6 +42,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
     filter_area = None
     filter_tag = None
     split_tag = None
+    choose = None
     print_sql = None
     only_projects = None
     estimated_time = None
@@ -96,6 +97,11 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             print(self.txt_dumps(b), end="")
             print("---- without tag: ")
             print(self.txt_dumps(a), end="")
+        elif self.choose:
+            chosen = choice(tasks)
+            self.choose = False
+            self.print_tasks([chosen])
+            thingsconnection.open_todo_in_things(chosen["uuid"])
         else:
             time_estimates = []
             print(self.txt_dumps(tasks, time_estimates=time_estimates), end="")
@@ -350,7 +356,14 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             "-t", "--filtertag", dest="filter_tag", help="filter by tag"
         )
         parser.add_argument(
-            "-st", "--split_tag", dest="split_tag", help="split list by tag"
+            "-st", "--split_tag", dest="split_tag", help="split task list by tag"
+        )
+        parser.add_argument(
+            "-C", "--choose",
+            action="store_true",
+            default=False,
+            dest="choose",
+            help="choose a random todo from output"
         )
         parser.add_argument(
             "-s", "--print_sql",
@@ -475,6 +488,7 @@ class ThingsCLI:  # pylint: disable=too-many-instance-attributes
             self.filter_area = args.filter_area or None
             self.filter_tag = args.filter_tag or None
             self.split_tag = args.split_tag or None
+            self.choose = args.choose or False
             self.print_sql = args.print_sql or None
             self.only_projects = args.only_projects or None
             self.recursive = args.recursive

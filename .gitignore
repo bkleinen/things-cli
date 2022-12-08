@@ -12,3 +12,4 @@ htmlcov/
 *.pyc
 node_modules/
 dbbackups/
+open_last.sh
